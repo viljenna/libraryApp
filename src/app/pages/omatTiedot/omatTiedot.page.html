@@ -1,0 +1,112 @@
+<div class="flex flex-col justify-center bg-lime-100 gap-2 p-12 w-4/5 mx-auto">
+    
+    <h2 class="text-xl text-lime-900 mb-4">OMAT TIEDOT:</h2>
+    <h3 class="text-2xl text-lime-900">Tervetuloa {{asiakas?.etunimi}} {{asiakas?.sukunimi}}</h3>
+    
+    <ul class="flex flex-col gap-2 w-2/3 mx-auto mt-2">
+        <li class="text-md flex py-2">Asiakasnumero: {{asiakas?.asiakasnro}}</li>
+        <li class="text-md flex flex-row justify-between">
+            <p class="self-center">{{asiakas?.katuosoite}}, {{asiakas?.postinro}} {{asiakas?.postitmp}}</p>
+            <button 
+                *ngIf="!osoiteAuki"
+                class="p-2 px-14 bg-lime-900 text-white"
+                (click)="muokkaaOsoite()"
+                >Muokkaa
+            </button>
+
+            <div 
+                *ngIf="osoiteAuki"
+                class="flex justify-end">
+                <form class="flex flex-col gap-2" [formGroup]="osoiteForm" (submit)="submit()">
+                    <input
+                        id="katuosoite"
+                        formControlName="katuosoite"
+                        type="text"
+                        placeholder="Osoite">
+                    <input
+                        id="postinro"
+                        formControlName="postinro"
+                        type="text"
+                        placeholder="Postinumero">
+                    <input
+                        id="postitmp"
+                        formControlName="postitmp"
+                        type="text"
+                        placeholder="Postitoimipaikka">
+                    <button
+                        type="submit"
+                        class="p-2 bg-lime-900 text-white">
+                        Tallenna
+                    </button>
+                </form>
+            </div>
+
+        </li>
+        <li class="text-md flex flex-row justify-between">
+            <p class="self-center">Puh: {{asiakas?.puh}}</p>
+            <button 
+                *ngIf="!puhAuki"
+                class="ml-4 p-2 px-14 bg-lime-900 text-white"
+                (click)="muokkaaPuh()"
+                >Muokkaa
+            </button>
+
+            <div 
+                *ngIf="puhAuki"
+                class="flex justify-end">
+                <form class="flex flex-col gap-2" [formGroup]="osoiteForm" (submit)="submit()">
+                    <input
+                        id="puh"
+                        formControlName="puh"
+                        type="text"
+                        placeholder="Puh">
+                  
+                    <button
+                        type="submit"
+                        class="p-2 bg-lime-900 text-white">
+                        Tallenna
+                    </button>
+                </form>
+            </div>
+
+        </li>
+    </ul>
+    
+    <h3 class="text-xl text-lime-900 border-t-2 pt-4 border-lime-900 mt-4">Omat lainaukset:</h3>
+    <p class="text-red-500 text-lg">{{error}}</p>
+    <ul *ngFor="let l of lainassa">
+        <li class="bg-lime-50 p-4">
+            <p class="text-lg text-lime-900">{{l.nimi}}</p>
+            <p class="text-md">{{l.kirjoittaja}}</p>
+            <p class="text-md">{{l.tyyppi}}, {{l.luokka}}</p>
+            <p class="text-md text-lime-700">eräpäivä {{ muokkaaPv(l.erapaiva) }}</p>
+            <p 
+                *ngIf="onkoMyohassa(l.erapaiva)"
+                class="text-md text-red-500">Laina myöhässä!</p>
+        </li>
+    </ul>
+
+    <h3 class="text-xl text-lime-900 border-t-2 pt-4 border-lime-900 mt-4">Myöhästyneet lainat:</h3>
+    
+    <ul *ngFor="let l of myohassa">
+        <li class="bg-lime-50 p-4">
+            <p class="text-lg text-lime-900">{{l.nimi}}</p>
+            <p class="text-md">{{l.kirjoittaja}}</p>
+            <p class="text-md">{{l.tyyppi}}, {{l.luokka}}</p>
+            <p class="text-md text-lime-700">eräpäivä {{ muokkaaPv(l.erapaiva) }}</p>
+            <p *ngIf="(l.palautuspv)">palautettu {{muokkaaPv(l.palautuspv)}}</p>
+           
+            <p class="text-md text-red-500">Viivästysmaksu {{laskeMaksut(l.erapaiva,l.palautuspv)}}€</p>
+        </li>
+    </ul>
+    <p
+        *ngIf="maksut > 0" 
+        class="text-md bg-red-500 text-white p-2">Viivästysmaksut yhteensä: {{maksut}}€</p>
+
+    <a routerLink="/">
+        <button class="p-2 mt-4 w-1/3 self-center bg-lime-900 text-white"
+            >Kirjaudu ulos
+        </button>
+    </a>
+
+</div>
